@@ -32,7 +32,7 @@ pipeline {
         }
          stage('Deploy'){
             steps{
-                deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'TomCatCredentials', path: '', url: 'http://localhost:8080/')], contextPath: 'TomCat pipeline Application', war: 'target/*.war'
+                deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'TomCatCredentials', path: '', url: 'http://localhost:8080/')], contextPath: 'TomCatpipelineApplication', war: 'target/*.war'
             }
         }
 }
