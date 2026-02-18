@@ -6,7 +6,7 @@ pipeline {
         
         stage('checkout clone'){
             steps{
-                git branch: 'feature/2026.02.10', credentialsId: 'vickky9494', url: 'https://github.com/vickky9494/Petclinic.git'
+                git branch: 'feature/2026.02.18', credentialsId: 'vickky9494', url: 'https://github.com/vickky9494/Petclinic.git'
             }
         }
         stage('Build'){
