@@ -19,8 +19,8 @@ pipeline {
                bat 'mvn Test'
            }
         }
-		stage(Generated Test Reports){
-		steps{ 
+		stage('Generated Test Reports'){
+		   steps{ 
 		        junit 'target/*surefire-reports/*.xml'
 		   }
 	    }
