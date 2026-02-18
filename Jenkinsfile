@@ -16,7 +16,7 @@ pipeline {
         }
         stage('Test'){
            steps{
-               
+               bat 'mvn Test'
            }
         }
 		stage(Generated Test Reports){
