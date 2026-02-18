@@ -1,82 +1,39 @@
 pipeline {
-    agent any 
     
-    tools{
-        jdk 'jdk11'
-        maven 'maven3'
-    }
-    
-    environment {
-        SCANNER_HOME=tool 'sonar-scanner'
-    }
+    agent any
     
     stages{
         
-        stage("Git Checkout"){
+        stage('checkout clone'){
             steps{
-                git branch: 'main', changelog: false, poll: false, url: 'https://github.com/jaiswaladi246/Petclinic.git'
+                git branch: 'feature/2026.02.10', credentialsId: 'vickky9494', url: 'https://github.com/vickky9494/Petclinic.git'
             }
         }
-        
-        stage("Compile"){
+        stage('Build'){
             steps{
-                sh "mvn clean compile"
+                bat 'mvn install'
             }
         }
-        
-         stage("Test Cases"){
+        stage('Test'){
+           steps{
+               
+           }
+        }
+		stage(Generated Test Reports){
+		steps{ 
+		        junit 'target/*surefire-reports/*.xml'
+		   }
+	    }
+       
+        stage('Gererated the Artifacts'){
             steps{
-                sh "mvn test"
+                archiveArtifacts artifacts: 'target/*.war', followSymlinks: false
             }
         }
-        
-        stage("Sonarqube Analysis "){
+         stage('Deploy'){
             steps{
-                withSonarQubeEnv('sonar-server') {
-                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Petclinic \
-                    -Dsonar.java.binaries=. \
-                    -Dsonar.projectKey=Petclinic '''
-    
-                }
+                deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'TomCatCredentials', path: '', url: 'http://localhost:8080/')], contextPath: 'Devopsonlinebookstore Application', war: 'target/*.war'
             }
         }
-        
-        stage("OWASP Dependency Check"){
-            steps{
-                dependencyCheck additionalArguments: '--scan ./ --format HTML ', odcInstallation: 'DP'
-                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-            }
-        }
-        
-         stage("Build"){
-            steps{
-                sh " mvn clean install"
-            }
-        }
-        
-        stage("Docker Build & Push"){
-            steps{
-                script{
-                   withDockerRegistry(credentialsId: '58be877c-9294-410e-98ee-6a959d73b352', toolName: 'docker') {
-                        
-                        sh "docker build -t image1 ."
-                        sh "docker tag image1 adijaiswal/pet-clinic123:latest "
-                        sh "docker push adijaiswal/pet-clinic123:latest "
-                    }
-                }
-            }
-        }
-        
-        stage("TRIVY"){
-            steps{
-                sh " trivy image adijaiswal/pet-clinic123:latest"
-            }
-        }
-        
-        stage("Deploy To Tomcat"){
-            steps{
-                sh "cp  /var/lib/jenkins/workspace/CI-CD/target/petclinic.war /opt/apache-tomcat-9.0.65/webapps/ "
-            }
-        }
-    }
+}
 }
