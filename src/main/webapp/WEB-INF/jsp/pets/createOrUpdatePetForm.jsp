@@ -37,6 +37,7 @@
                     <c:choose>
                         <c:when test="${pet['new']}">
                             <button class="btn btn-default" type="submit">Add Pet</button>
+                             <button class="btn btn-default" type="submit">Delete Pet</button>
                         </c:when>
                         <c:otherwise>
                             <button class="btn btn-default" type="submit">Update Pet</button>
